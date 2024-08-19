@@ -2,14 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fetchForecastData, fetchWeatherData } from "../services/weatherService";
 import "./WeatherComponent.css";
 
-// Icon Set 1
-import clear_icon from "../assets/icons/clear.png";
-import cloud_icon from "../assets/icons/cloud.png";
-import drizzle_icon from "../assets/icons/drizzle.png";
-import snow_icon from "../assets/icons/snow.png";
-import rain_icon from "../assets/icons/rain.png";
-
-// Icon Set 2
+// Icon Set
 import clear_day_icon from "../assets/icons/clearday.png";
 import clear_night_icon from "../assets/icons/clearnight.png";
 import cloudy_day_icon from "../assets/icons/cloudyday.png";
@@ -53,15 +46,12 @@ const WeatherComponent = () => {
 
   useEffect(() => {
     if (weatherData) {
-      const { timezone } = weatherData;
-      const cityTime = new Date();
-      const localTime = cityTime.getTime();
-      const cityTimeZoneOffset = timezone * 1000;
-      const adjustedTime = localTime + cityTimeZoneOffset;
+      const { timezone, dt } = weatherData;
 
-      const adjustedDate = new Date(adjustedTime);
-      const day = adjustedDate.toLocaleDateString('en-US', {weekday: 'long'});
-      const date = adjustedDate.toLocaleDateString('en-US', {month: 'long', day: 'numeric'});
+      const adjustedDate = new Date((dt + timezone) * 1000);
+
+      const day = adjustedDate.toLocaleDateString('en-US', { weekday: 'long' });
+      const date = adjustedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
 
       setCurrentDate({day, date})
     }
@@ -109,7 +99,8 @@ const WeatherComponent = () => {
           humidity: wData.main.humidity,
           location: wData.name,
           icon: wData.weather[0].icon,
-          timezone: wData.timezone
+          timezone: wData.timezone,
+          dt: wData.dt
         });
         setForecastData(fData.list.slice(0, 8));
         setLocation("");
