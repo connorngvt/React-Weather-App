@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { fetchForecastData, fetchWeatherData } from "../services/weatherService";
+import {
+  fetchForecastData,
+  fetchWeatherData,
+} from "../services/weatherService";
 import "./WeatherComponent.css";
 
 // Icon Set
@@ -50,12 +53,15 @@ const WeatherComponent = () => {
 
       const adjustedDate = new Date((dt + timezone) * 1000);
 
-      const day = adjustedDate.toLocaleDateString('en-US', { weekday: 'long' });
-      const date = adjustedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+      const day = adjustedDate.toLocaleDateString("en-US", { weekday: "long" });
+      const date = adjustedDate.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+      });
 
-      setCurrentDate({day, date})
+      setCurrentDate({ day, date });
     }
-  }, [weatherData])
+  }, [weatherData]);
 
   // Changes the state of the location variable as input changes
   const handleLocationChange = (event) => {
@@ -71,9 +77,9 @@ const WeatherComponent = () => {
 
     const localTime = new Date(utcDate.getTime() + timezoneOffset * 1000);
 
-    const timeString = localTime.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
+    const timeString = localTime.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
       hour12: true,
     });
 
@@ -93,79 +99,105 @@ const WeatherComponent = () => {
         const wData = weather.data;
         const fData = forecast.data;
         setWeatherData({
-          temperature: kelvinToCelsius(wData.main.temp), 
+          temperature: kelvinToCelsius(wData.main.temp),
           condition: wData.weather[0].main,
           windSpeed: wData.wind.speed,
           humidity: wData.main.humidity,
           location: wData.name,
           icon: wData.weather[0].icon,
           timezone: wData.timezone,
-          dt: wData.dt
+          dt: wData.dt,
         });
         setForecastData(fData.list.slice(0, 8));
         setLocation("");
-      }
-      catch (error) {
+      } catch (error) {
         if (error.message.includes("City not found")) {
           alert("City not found. Please enter a valid city.");
-        }
-        else {
-          alert("Error fetching weather data. Please try again.")
+        } else {
+          alert("Error fetching weather data. Please try again.");
         }
       }
     }
   };
 
   return (
-    <div className="weather-container">
-      {!weatherData && <h2>Weather App</h2>}
-      <form onSubmit={search} className="weather-form">
+    <div className="bg-background min-h-screen flex flex-col items-center justify-center">
+      {!weatherData && (
+        <h2 className="text-2xl text-white mb-3 font-bold">Weather App</h2>
+      )}
+      <form
+        onSubmit={search}
+        className="flex justify-evenly items-center w-3/4 pt-10"
+      >
         <input
+          className="h-12 w-3/4 rounded-2xl border-none text-xl px-2 shadow-md shadow-black/75"
           type="text"
           placeholder="Enter City"
           value={location}
           onChange={handleLocationChange}
         />
-        <button type="submit">
+        <button
+          type="submit"
+          className="h-12 w-12 text-xl text-black border-none rounded-full bg-white cursor-pointer shadow-md shadow-black/75 transition-colors duration-500 ease-in-out hover:bg-white/70"
+        >
           <i className="fa-solid fa-magnifying-glass"></i>
         </button>
       </form>
       {weatherData && (
-        <div className="weather-content">
-          <img src={icons[weatherData.icon] || clear_day_icon} alt="Weather Icon" />
-          <h3>{weatherData.location}</h3>
-          {currentDate.day && currentDate.date && (
-                <p>{currentDate.day} | {currentDate.date}</p>
-              )}
-          <h4>&nbsp;{weatherData.temperature}°</h4>
-          <p>{weatherData.condition}</p>
+        <div className="flex flex-col items-center flex-1 justify-around mb-5 mt-3">
+          <img
+            className="w-1/2"
+            src={icons[weatherData.icon] || clear_day_icon}
+            alt="Weather Icon"
+          />
+          <div className="flex flex-col justify-center items-center h-[9rem] w-full gap-1">
+            <h3 className="text-white text-4xl font-bold">
+              {weatherData.location}
+            </h3>
+            {currentDate.day && currentDate.date && (
+              <p className="text-white text-lg">
+                {currentDate.day} | {currentDate.date}
+              </p>
+            )}
+            <h4 className="text-white text-4xl">
+              &nbsp;{weatherData.temperature}°
+            </h4>
+            <p className="text-white text-lg">{weatherData.condition}</p>
+          </div>
           {forecastData.length > 0 && (
-            <div className="forecast-container">
-              <div className="forecast-item-container">
-                {forecastData.map((timeframe, index) => (
-                  <div key={index} className="forecast-item">
-                    <p>{convertToLocalTime(timeframe.dt_txt, weatherData.timezone)}</p>
-                    <img src={icons[timeframe.weather[0].icon]} alt="" />
-                    <p>{`${kelvinToCelsius(timeframe.main.temp)}°C`}</p>
-                  </div>
-                  ))}
-              </div>
+            <div className="forecast-item-container flex w-[28.125rem] overflow-x-auto pb-4 mt-3">
+              {forecastData.map((timeframe, index) => (
+                <div key={index} className="flex flex-col items-center justify-center bg-white/10 mx-2.5 w-[6.25rem] h-[8rem] p-2 flex-shrink-0 rounded-2xl shadow-md shadow-black/75 transition-color duration-500 ease-in-out hover:bg-white/20">
+                  <p className="text-lg m-0 text-white"> 
+                    {convertToLocalTime(
+                      timeframe.dt_txt,
+                      weatherData.timezone
+                    )}
+                  </p>
+                  <img className="w-auto h-16 object-contain" src={icons[timeframe.weather[0].icon]} alt="" />
+                  <p className="text-lg m-0 text-white">{`${kelvinToCelsius(timeframe.main.temp)}°C`}</p>
+                </div>
+              ))}
             </div>
           )}
-          <hr />
-          <div className="air-conditions-content">
-            <div className="air-condition">
-              <img src={wind_icon} alt="Humidity Icon" />
+          <hr className="w-3/4 m-2"/>
+          <div className="flex justify-between w-3/4">
+            <div className="flex items-center my-3">
+              <img className="w-12 m-3" src={wind_icon} alt="Humidity Icon" />
               <div>
-                <p>{weatherData.windSpeed} m/s</p>
-                <p>Wind</p>
+                <p className="text-lg my-1/2 text-white">{weatherData.windSpeed} m/s</p>
+                <p className="text-lg my-1/2 text-white">Wind</p>
               </div>
             </div>
-            <div className="air-condition">
-              <img src={humidity_icon} alt="Humidity Icon" />
+            <div className="flex items-center my-3">
+              <img
+                className="w-12 m-3"
+                src={humidity_icon}
+                alt="Humidity Icon"
+              />
               <div>
-                <p>{weatherData.humidity}%</p>
-                <p>Humidity</p>
+                <p className="text-lg my-1/2 text-white">{weatherData.humidity}%</p>
+                <p className="text-lg my-1/2 text-white">Humidity</p>
               </div>
             </div>
           </div>
