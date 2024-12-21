@@ -3,7 +3,6 @@ import {
   fetchForecastData,
   fetchWeatherData,
 } from "../services/weatherService";
-import "./WeatherComponent.css";
 
 // Icon Set
 import clear_day_icon from "../assets/icons/clearday.png";
