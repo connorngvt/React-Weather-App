@@ -2,7 +2,7 @@ import WeatherComponent from "./components/WeatherComponent";
 
 function App() {
   return (
-    <div className="overflow-x-hidden">
+    <div className="h-screen">
       <WeatherComponent />
     </div>
   );

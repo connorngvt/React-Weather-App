@@ -121,16 +121,16 @@ const WeatherComponent = () => {
   };
 
   return (
-    <div className="bg-background min-h-screen flex flex-col items-center justify-center">
+    <div className="bg-background overflow-y-auto h-full flex flex-col items-center">
       {!weatherData && (
-        <h2 className="text-2xl text-white mb-3 font-bold">Weather App</h2>
+        <h2 className="text-2xl sm:text-4xl text-white pt-5 font-bold">Weather App</h2>
       )}
       <form
         onSubmit={search}
-        className="flex justify-evenly items-center w-3/4 pt-10"
+        className="flex justify-evenly items-center w-3/4 pt-8 md:pt-8"
       >
         <input
-          className="h-12 w-3/4 rounded-2xl border-none text-xl px-2 shadow-md shadow-black/75"
+          className="h-12 w-3/4 sm:h-16 sm:w-4/5 rounded-2xl border-none text-xl px-2 shadow-md shadow-black/75"
           type="text"
           placeholder="Enter City"
           value={location}
@@ -138,66 +138,68 @@ const WeatherComponent = () => {
         />
         <button
           type="submit"
-          className="h-12 w-12 text-xl text-black border-none rounded-full bg-white cursor-pointer shadow-md shadow-black/75 transition-colors duration-500 ease-in-out hover:bg-white/70"
+          className="h-12 w-12 sm:h-16 sm:w-16 text-xl text-black border-none rounded-full bg-white cursor-pointer shadow-md shadow-black/75 transition-colors duration-500 ease-in-out hover:bg-white/70"
         >
           <i className="fa-solid fa-magnifying-glass"></i>
         </button>
       </form>
       {weatherData && (
-        <div className="flex flex-col items-center flex-1 justify-around mb-5 mt-3">
+        <div className="flex-1 flex flex-col justify-around items-center w-full">
           <img
-            className="w-1/2"
+            className="w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 lg:pt-10"
             src={icons[weatherData.icon] || clear_day_icon}
             alt="Weather Icon"
           />
-          <div className="flex flex-col justify-center items-center h-[9rem] w-full gap-1">
-            <h3 className="text-white text-4xl font-bold">
+          <div className="flex flex-col justify-center items-center h-1/4 lg:h-1/2 gap-1 md:gap-3 lg:gap-5 lg:p-10 mb-8">
+            <h3 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold">
               {weatherData.location}
             </h3>
             {currentDate.day && currentDate.date && (
-              <p className="text-white text-lg">
+              <p className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl">
                 {currentDate.day} | {currentDate.date}
               </p>
             )}
-            <h4 className="text-white text-4xl">
-              &nbsp;{weatherData.temperature}°
+            <h4 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+              &nbsp;{weatherData.temperature}°C
             </h4>
-            <p className="text-white text-lg">{weatherData.condition}</p>
+            <p className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl">{weatherData.condition}</p>
           </div>
           {forecastData.length > 0 && (
-            <div className="forecast-item-container flex w-[28.125rem] overflow-x-auto pb-4 mt-3">
-              {forecastData.map((timeframe, index) => (
-                <div key={index} className="flex flex-col items-center justify-center bg-white/10 mx-2.5 w-[6.25rem] h-[8rem] p-2 flex-shrink-0 rounded-2xl shadow-md shadow-black/75 transition-color duration-500 ease-in-out hover:bg-white/20">
-                  <p className="text-lg m-0 text-white"> 
-                    {convertToLocalTime(
-                      timeframe.dt_txt,
-                      weatherData.timezone
-                    )}
-                  </p>
-                  <img className="w-auto h-16 object-contain" src={icons[timeframe.weather[0].icon]} alt="" />
-                  <p className="text-lg m-0 text-white">{`${kelvinToCelsius(timeframe.main.temp)}°C`}</p>
-                </div>
-              ))}
+            <div className="flex justify-center items-center w-11/12">
+              <div className="forecast-item-container flex overflow-x-auto overflow-y-hidden pb-2 h-full lg:h-80 lg:mb-8">
+                {forecastData.map((timeframe, index) => (
+                  <div key={index} className="flex flex-col items-center justify-around bg-white/10 mx-2.5 w-1/3 sm:w-1/4 md:w-1/5 lg:w-40 h-full p-2 flex-shrink-0 rounded-2xl shadow-md shadow-black/75 transition-color duration-500 ease-in-out hover:bg-white/20">
+                    <p className="text-lg md:text-2xl lg:text-3xl m-0 text-white"> 
+                      {convertToLocalTime(
+                        timeframe.dt_txt,
+                        weatherData.timezone
+                      )}
+                    </p>
+                    <img className="w-auto h-14 md:h-20 lg:h-24 object-contain" src={icons[timeframe.weather[0].icon]} alt="" />
+                    <p className="text-lg md:text-2xl lg:text-3xl m-0 text-white">{`${kelvinToCelsius(timeframe.main.temp)}°C`}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-          <hr className="w-3/4 m-2"/>
-          <div className="flex justify-between w-3/4">
+          <hr className="w-4/5 m-2"/>
+          <div className="flex justify-between w-5/6 md:mb-10 xl:mt-10 flex-wrap">
             <div className="flex items-center my-3">
-              <img className="w-12 m-3" src={wind_icon} alt="Humidity Icon" />
+              <img className="w-12 sm:w-14 md:w-16 lg:w-20 m-3" src={wind_icon} alt="Humidity Icon" />
               <div>
-                <p className="text-lg my-1/2 text-white">{weatherData.windSpeed} m/s</p>
-                <p className="text-lg my-1/2 text-white">Wind</p>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white">{weatherData.windSpeed} m/s</p>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white">Wind</p>
               </div>
             </div>
             <div className="flex items-center my-3">
               <img
-                className="w-12 m-3"
+                className="w-12 sm:w-14 md:w-16 lg:w-20 m-3"
                 src={humidity_icon}
                 alt="Humidity Icon"
               />
               <div>
-                <p className="text-lg my-1/2 text-white">{weatherData.humidity}%</p>
-                <p className="text-lg my-1/2 text-white">Humidity</p>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white">{weatherData.humidity}%</p>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white">Humidity</p>
               </div>
             </div>
           </div>
